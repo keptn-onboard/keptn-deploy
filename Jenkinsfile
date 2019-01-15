@@ -138,7 +138,7 @@ pipeline {
         }
       }
     }
-    stage('Deploy to dev') {
+    stage('Deploy to staging') {
       steps {
         build job: "${env.GITHUB_ORGANIZATION}/deploy/staging",
           parameters: [
