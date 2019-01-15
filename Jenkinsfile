@@ -36,6 +36,7 @@ pipeline {
         }
       }
     }
+    /*
     stage('DT Deploy Event') {
       steps {
         container("curl") {
@@ -108,5 +109,6 @@ pipeline {
         }
       }
     }
+    */
   }
 }
