@@ -117,8 +117,6 @@ pipeline {
           sh "docker pull ${env.TAG_DEV}"
           sh "docker tag ${env.TAG_DEV} ${env.TAG_STAGING}"
           sh "docker push ${env.TAG_STAGING}"
-          sh "docker tag ${env.TAG_DEV} ${env.APP_NAME}-staging-stable"
-          sh "docker push ${env.TAG_STAGING}"
         }
       }
     }
@@ -138,6 +136,16 @@ pipeline {
             /* sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}" */
           }
         }
+      }
+    }
+    stage('Deploy to dev') {
+      steps {
+        build job: "${env.GITHUB_ORGANIZATION}/deploy/staging",
+          parameters: [
+            string(name: 'APP_NAME', value: "${env.APP_NAME}"),
+            string(name: 'TAG_STAGING', value: "${env.TAG_STAGING}"),
+            string(name: 'VERSION', value: "${env.VERSION}")
+          ]
       }
     }
   }
