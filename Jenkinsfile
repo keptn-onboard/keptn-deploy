@@ -21,7 +21,8 @@ pipeline {
   agent {
     label 'kubegit'
   }
-  stage('Check out config') {
+  stages {
+    stage('Check out config') {
       steps {
         container('git') {
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
@@ -32,7 +33,6 @@ pipeline {
         }
       }
     }
-  stages {
     stage('Deploy to production namespace') {
       steps {
         checkout scm
