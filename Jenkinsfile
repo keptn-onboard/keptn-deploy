@@ -23,8 +23,7 @@ pipeline {
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
             sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
             sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
-            sh "cd config"
-            sh "git checkout dev"
+            sh "cd config && git checkout dev"
           }
         }
       }
@@ -33,8 +32,7 @@ pipeline {
       steps {
         checkout scm
         container('kubectl') {
-          sh "cd config"
-          sh "kubectl -n dev apply -f ."
+          sh "cd config && kubectl -n dev apply -f ."
         }
       }
     }
