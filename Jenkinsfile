@@ -21,7 +21,7 @@ pipeline {
       steps {
         checkout scm
         container('kubectl') {
-          sh "kubectl -n production apply -f ${env.APP_NAME}.yml"
+          sh "kubectl -n production apply -f ."
         }
       }
     }
