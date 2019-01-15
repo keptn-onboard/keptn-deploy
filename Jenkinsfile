@@ -22,11 +22,22 @@ pipeline {
     label 'kubegit'
   }
   stages {
+    stage('Check out config') {
+      steps {
+        container('git') {
+          withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+            sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
+            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
+            sh "cd config && git checkout staging"
+          }
+        }
+      }
+    }
     stage('Deploy to staging namespace') {
       steps {
         checkout scm
         container('kubectl') {
-          sh "kubectl -n staging apply -f ${env.APP_NAME}.yml"
+          sh "cd config && kubectl -n staging apply -f ."
         }
       }
     }
@@ -88,9 +99,12 @@ pipeline {
       }
     }
     */
-    stage('Mark artifact for production namespace') {
+    stage('Mark artifact for stable') {
       steps {
         container('docker'){
+          sh "docker pull ${env.TAG_STAGING}"
+          sh "docker tag ${env.TAG_STAGING} ${env.APP_NAME}-staging-stable"
+          sh "docker push ${env.TAG_STAGING}"
         }
       }
     }
@@ -103,10 +117,10 @@ pipeline {
             sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
             sh "cd config && git checkout production"
             /* sh "cd config && git checkout -b pr/${env.PR_BRANCH}" */
-            sh "cd config && sed -i 's#image: .*#image: ${env.TAG_STAGING}#' ${env.APP_NAME}.yml"
-            sh "cd config && git add ."
-            sh "cd config && git commit -am 'updated config for ${env.APP_NAME}'"
-            sh "cd config && git push"
+            //sh "cd config && sed -i 's#image: .*#image: ${env.TAG_STAGING}#' ${env.APP_NAME}.yml"
+            //sh "cd config && git add ."
+            //sh "cd config && git commit -am 'updated config for ${env.APP_NAME}'"
+            //sh "cd config && git push"
             /* sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}" */
           }
         }
