@@ -16,6 +16,7 @@ pipeline {
   parameters {
     string(name: 'APP_NAME', defaultValue: '', description: 'The name of the service to deploy.', trim: true)
     string(name: 'TAG_STAGING', defaultValue: '', description: 'The image of the service to deploy.', trim: true)
+    string(name: 'TAG_DEV', defaultValue: '', description: '.', trim: true)
     string(name: 'VERSION', defaultValue: '', description: 'The version of the service to deploy.', trim: true)
   }
   agent {
@@ -57,6 +58,7 @@ pipeline {
         }
       }
     }
+    /*
     stage('Run health check in dev') {
       steps {
         echo "Waiting for the service to start..."
@@ -104,6 +106,32 @@ pipeline {
               currentBuild.result = 'FAILED'
               error "Functional check in dev failed."
             }
+          }
+        }
+      }
+    }
+    */
+    stage('Mark artifact for staging namespace') {
+      steps {
+        container('docker'){
+          sh "docker tag ${env.TAG_DEV} ${env.TAG_STAGING}"
+          sh "docker push ${env.TAG_STAGING}"
+        }
+      }
+    }
+    stage('Commit Configuration change') {
+      steps {
+        container('git') {
+          withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+            sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
+            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
+            sh "cd config && git checkout staging"
+            /* sh "cd config && git checkout -b pr/${env.PR_BRANCH}" */
+            sh "cd config && sed -i 's#image: .*#image: ${env.TAG_STAGING}#' ${env.APP_NAME}.yml"
+            sh "cd config && git add ."
+            sh "cd config && git commit -am 'updated config for ${env.APP_NAME}'"
+            sh "cd config && git push"
+            /* sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}" */
           }
         }
       }
