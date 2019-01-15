@@ -117,6 +117,8 @@ pipeline {
           sh "docker pull ${env.TAG_DEV}"
           sh "docker tag ${env.TAG_DEV} ${env.TAG_STAGING}"
           sh "docker push ${env.TAG_STAGING}"
+          sh "docker tag ${env.TAG_DEV} ${env.APP_NAME}-staging-stable"
+          sh "docker push ${env.TAG_STAGING}"
         }
       }
     }
@@ -129,7 +131,7 @@ pipeline {
             sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
             sh "cd config && git checkout staging"
             /* sh "cd config && git checkout -b pr/${env.PR_BRANCH}" */
-            sh "cd config && sed -i 's#image: .*#image: ${env.TAG_STAGING}#' ${env.APP_NAME}.yml"
+            sh "cd config && sed -i 's~image: .* #image-green~image: ${env.TAG_STAGING} #image-green~' ${env.APP_NAME}.yml"
             sh "cd config && git add ."
             sh "cd config && git commit -am 'updated config for ${env.APP_NAME}'"
             sh "cd config && git push"
