@@ -114,6 +114,7 @@ pipeline {
     stage('Mark artifact for staging namespace') {
       steps {
         container('docker'){
+          sh "docker pull ${env.TAG_DEV}"
           sh "docker tag ${env.TAG_DEV} ${env.TAG_STAGING}"
           sh "docker push ${env.TAG_STAGING}"
         }
