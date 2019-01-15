@@ -126,5 +126,15 @@ pipeline {
         }
       }
     }
+    stage('Deploy to production') {
+      steps {
+        build job: "${env.GITHUB_ORGANIZATION}/deploy/staging",
+          parameters: [
+            string(name: 'APP_NAME', value: "${env.APP_NAME}"),
+            string(name: 'TAG_STAGING', value: "${env.TAG_STAGING}"),
+            string(name: 'VERSION', value: "${env.VERSION}")
+          ]
+      }
+    }
   }
 }
