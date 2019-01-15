@@ -128,7 +128,7 @@ pipeline {
     }
     stage('Deploy to production') {
       steps {
-        build job: "${env.GITHUB_ORGANIZATION}/deploy/staging",
+        build job: "${env.GITHUB_ORGANIZATION}/deploy/production",
           parameters: [
             string(name: 'APP_NAME', value: "${env.APP_NAME}"),
             string(name: 'TAG_STAGING', value: "${env.TAG_STAGING}"),
