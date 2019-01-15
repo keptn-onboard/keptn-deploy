@@ -85,11 +85,6 @@ pipeline {
       }
     }
     stage('Run functional check in dev') {
-      when {
-        expression {
-          return env.BRANCH_NAME ==~ 'release/.*' || env.BRANCH_NAME ==~'master'
-        }
-      }
       steps {
         container('jmeter') {
           script {
