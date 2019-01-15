@@ -13,6 +13,11 @@ def tagMatchRules = [
 ]
 
 pipeline {
+  parameters {
+    string(name: 'APP_NAME', defaultValue: '', description: 'The name of the service to deploy.', trim: true)
+    string(name: 'TAG_STAGING', defaultValue: '', description: 'The image of the service to deploy.', trim: true)
+    string(name: 'VERSION', defaultValue: '', description: 'The version of the service to deploy.', trim: true)
+  }
   agent {
     label 'kubegit'
   }
@@ -36,7 +41,6 @@ pipeline {
         }
       }
     }
-    /*
     stage('DT Deploy Event') {
       steps {
         container("curl") {
@@ -109,6 +113,5 @@ pipeline {
         }
       }
     }
-    */
   }
 }
