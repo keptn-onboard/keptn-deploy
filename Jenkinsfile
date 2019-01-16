@@ -15,9 +15,9 @@ def tagMatchRules = [
 pipeline {
   parameters {
     string(name: 'APP_NAME', defaultValue: '', description: 'The name of the service to deploy.', trim: true)
-    string(name: 'TAG_STAGING', defaultValue: '', description: 'The image of the service to deploy.', trim: true)
-    string(name: 'TAG_DEV', defaultValue: '', description: '.', trim: true)
-    string(name: 'VERSION', defaultValue: '', description: 'The version of the service to deploy.', trim: true)
+    //string(name: 'TAG_STAGING', defaultValue: '', description: 'The image of the service to deploy.', trim: true)
+    //string(name: 'TAG_DEV', defaultValue: '', description: '.', trim: true)
+    //string(name: 'VERSION', defaultValue: '', description: 'The version of the service to deploy.', trim: true)
   }
   agent {
     label 'kubegit'
@@ -41,7 +41,7 @@ pipeline {
           sh "cd config && kubectl -n dev apply -f ."
         }
       }
-    }
+    }  
     stage('DT Deploy Event') {
       steps {
         container("curl") {
@@ -111,6 +111,7 @@ pipeline {
       }
     }
     */
+    /*
     stage('Mark artifact for staging namespace') {
       steps {
         container('docker'){
@@ -120,6 +121,8 @@ pipeline {
         }
       }
     }
+    */
+    /*
     stage('Commit Configuration change') {
       steps {
         container('git') {
@@ -128,12 +131,12 @@ pipeline {
             sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
             sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
             sh "cd config && git checkout staging"
-            /* sh "cd config && git checkout -b pr/${env.PR_BRANCH}" */
+            // sh "cd config && git checkout -b pr/${env.PR_BRANCH}" 
             sh "cd config && sed -i 's~image: .* #image-green~image: ${env.TAG_STAGING} #image-green~' ${env.APP_NAME}.yml"
             sh "cd config && git add ."
             sh "cd config && git commit -am 'updated config for ${env.APP_NAME}'"
             sh "cd config && git push"
-            /* sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}" */
+            // sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}" 
           }
         }
       }
@@ -148,5 +151,6 @@ pipeline {
           ]
       }
     }
+    */
   }
 }
