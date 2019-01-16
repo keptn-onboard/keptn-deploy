@@ -30,7 +30,7 @@ pipeline {
             sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
             sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/${env.APP_NAME}"
             script {
-              TAG_IMAGE = readFile('${env.APP_NAME}/artifact').trim();
+              TAG_IMAGE = readFile('${env.APP_NAME}/artifact.id').trim();
             }
           }
         }
