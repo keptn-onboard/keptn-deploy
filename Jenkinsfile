@@ -118,6 +118,7 @@ pipeline {
           script {
             TAG_IMAGE = readFile('config/image.txt')
             //TAG_PASSED = 
+            PULL_REQUEST = TAG_IMAGE
           }
           sh "echo ${TAG_IMAGE}"
           //sh "docker pull ${TAG_IMAGE}"
@@ -160,7 +161,7 @@ pipeline {
   post {
     always {
       container("curl") {
-        sh "curl -X POST \"https://us-central1-sai-research.cloudfunctions.net/jenkinsNotificationListener\" -H \"accept: application/json\" -H \"Content-Type: application/json\" -d \"{ \\\"service\\\": \\\"${env.APP_NAME}\\\", \\\"image\\\": \\\"image\\\"}\" "       
+        sh "curl -X POST \"https://us-central1-sai-research.cloudfunctions.net/jenkinsNotificationListener\" -H \"accept: application/json\" -H \"Content-Type: application/json\" -d \"{ \\\"environment\\\": \\\"dev\\\", \\\"service\\\": \\\"${env.APP_NAME}\\\", \\\"pull_request\\\": \\\"${PULL_REQUEST}\\\"}\" "       
       }
     }
   }
