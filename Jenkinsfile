@@ -116,7 +116,7 @@ pipeline {
         container('docker'){
           sh "cd config && cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//' > image.txt"
           script {
-            TAG_IMAGE = readFile('config/image.txt')
+            TAG_IMAGE = readFile('config/image.txt').trim()
             //TAG_PASSED = 
             PULL_REQUEST = TAG_IMAGE
           }
@@ -161,7 +161,7 @@ pipeline {
   post {
     always {
       container("curl") {
-        sh "curl -X POST \"https://us-central1-sai-research.cloudfunctions.net/jenkinsNotificationListener\" -H \"accept: application/json\" -H \"Content-Type: application/json\" -d \"{ \\\"environment\\\": \\\"dev\\\", \\\"service\\\": \\\"${env.APP_NAME}\\\", \\\"pull_request\\\": \\\"pr-31\\\"}\" "       
+        sh "curl -X POST \"https://us-central1-sai-research.cloudfunctions.net/jenkinsNotificationListener\" -H \"accept: application/json\" -H \"Content-Type: application/json\" -d \"{ \\\"status\\\": \\\"success\\\", \\\"environment\\\": \\\"dev\\\", \\\"service\\\": \\\"${env.APP_NAME}\\\", \\\"pull_request\\\": \\\"pr-31\\\"}\" "       
       }
     }
   }
