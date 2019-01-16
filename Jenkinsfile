@@ -17,11 +17,13 @@ def TAG_IMAGE = 'UNKNOWN'
 pipeline {
   parameters {
     string(name: 'APP_NAME', defaultValue: '', description: 'The name of the service to deploy.', trim: true)
+    string(name: 'PULL_REQUEST', defaultValue: '', description: 'Pull request id.', trim: true)
   }
   agent {
     label 'kubegit'
   }
   stages {
+    /*
     stage('Checkout repo') {
       steps {
         container('git') {
@@ -35,10 +37,15 @@ pipeline {
           }
         }
       }
-    }
+    }*/
+
     stage('Commit Configuration change') {
       steps {
         container('git') {
+          script {
+            TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${env.ARTEFACT_ID}"
+            TAG_IMAGE = "${env.TAG}-pr-${env.PULL_REQUEST}"
+          }
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
             sh "rm -rf config"
             sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
