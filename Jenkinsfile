@@ -99,7 +99,7 @@ pipeline {
       }
     }
     */
-    stage('Mark artifact for stable') {
+    stage('Promote deployment and artifact for stable') {
       steps {
         container('docker'){
           sh "docker pull ${env.TAG_STAGING}"
@@ -117,10 +117,10 @@ pipeline {
             sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
             sh "cd config && git checkout production"
             /* sh "cd config && git checkout -b pr/${env.PR_BRANCH}" */
-            //sh "cd config && sed -i 's#image: .*#image: ${env.TAG_STAGING}#' ${env.APP_NAME}.yml"
-            //sh "cd config && git add ."
-            //sh "cd config && git commit -am 'updated config for ${env.APP_NAME}'"
-            //sh "cd config && git push"
+            sh "cd config && sed -i 's~image: .* #image-green~image: ${env.TAG_STAGING} #image-green~' ${env.APP_NAME}.yml"
+            sh "cd config && git add ."
+            sh "cd config && git commit -am 'updated config for ${env.APP_NAME}'"
+            sh "cd config && git push"
             /* sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}" */
           }
         }
