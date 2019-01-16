@@ -36,7 +36,7 @@ pipeline {
     }
     stage('Deploy to dev namespace') {
       steps {
-        checkout scm
+        //checkout scm
         container('kubectl') {
           sh "cd config && kubectl -n dev apply -f ."
         }
@@ -51,7 +51,7 @@ pipeline {
               tagRule : tagMatchRules,
               customProperties : [
                 [key: 'Jenkins Build Number', value: "${env.BUILD_ID}"],
-                [key: 'Git commit', value: "${env.GIT_COMMIT}"]
+                //[key: 'Git commit', value: "${env.GIT_COMMIT}"]
               ]
             )
           }
@@ -111,17 +111,19 @@ pipeline {
       }
     }
     */
-    /*
     stage('Mark artifact for staging namespace') {
       steps {
         container('docker'){
-          sh "docker pull ${env.TAG_DEV}"
-          sh "docker tag ${env.TAG_DEV} ${env.TAG_STAGING}"
-          sh "docker push ${env.TAG_STAGING}"
+          script {
+            TAG_DEV = "cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//'"
+          }
+          sh "echo ${TAG_DEV}"
+          sh "docker pull ${TAG_DEV}"
+          sh "docker tag ${TAG_DEV} ${TAG_STAGING}"
+          sh "docker push ${TAG_STAGING}"
         }
       }
     }
-    */
     /*
     stage('Commit Configuration change') {
       steps {
