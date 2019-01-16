@@ -47,7 +47,7 @@ pipeline {
             /* sh "cd config && git checkout -b pr/${env.PR_BRANCH}" */
             sh "cd config && sed -i 's#image: .*#image: ${TAG_IMAGE}#' ${env.APP_NAME}.yml"
             sh "cd config && git add ."
-            sh "cd config && git commit -am 'Updated config for ${env.APP_NAME}'"
+            sh "cd config && git commit -am '[CI-UPDATECONFIG] Updated config for: ${env.APP_NAME}'"
             sh "cd config && git push"
             /* sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}" */
           }
