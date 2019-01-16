@@ -45,7 +45,7 @@ pipeline {
           script {
             ARTEFACT_ID = "sockshop/" + "${env.APP_NAME}"
             TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}"
-            TAG_IMAGE = "${env.TAG}-${env.PULL_REQUEST}"
+            TAG_IMAGE = "${TAG}-${env.PULL_REQUEST}"
           }
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
             sh "rm -rf config"
