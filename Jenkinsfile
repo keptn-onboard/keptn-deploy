@@ -117,6 +117,7 @@ pipeline {
           script {
             TAG_DEV = "cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//'"
           }
+          sh "cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//'"
           sh "echo ${TAG_DEV}"
           sh "docker pull ${TAG_DEV}"
           sh "docker tag ${TAG_DEV} ${TAG_STAGING}"
