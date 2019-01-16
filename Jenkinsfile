@@ -114,7 +114,10 @@ pipeline {
     stage('Mark artifact for staging namespace') {
       steps {
         container('docker'){
-          sh "cd config && ${TAG_DEV}=`cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//'`"
+          script {
+            TAG_DEV = cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//'
+          }
+          //sh "cd config && ${TAG_DEV}=`cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//'`"
           //sh "cd config && export TAG_DEV=`cat image.txt`"
           sh "echo ${TAG_DEV}"
           sh "docker pull ${TAG_DEV}"
