@@ -43,8 +43,9 @@ pipeline {
       steps {
         container('git') {
           script {
-            TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${env.ARTEFACT_ID}"
-            TAG_IMAGE = "${env.TAG}-pr-${env.PULL_REQUEST}"
+            ARTEFACT_ID = "sockshop/" + "${env.APP_NAME}"
+            TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}"
+            TAG_IMAGE = "${env.TAG}-${env.PULL_REQUEST}"
           }
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
             sh "rm -rf config"
