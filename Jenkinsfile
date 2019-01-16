@@ -111,17 +111,18 @@ pipeline {
       }
     }
     */
-    stage('Mark artifact for staging namespace') {
+    stage('Get Artifact ID') {
       steps {
         container('docker'){
           sh "cd config && cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//' > image.txt"
           script {
-            TAG_DEV = readFile('config/image.txt')
+            TAG_IMAGE = readFile('config/image.txt')
+            //TAG_PASSED = 
           }
-          sh "echo ${TAG_DEV}"
-          sh "docker pull ${TAG_DEV}"
-          sh "docker tag ${TAG_DEV} ${TAG_STAGING}"
-          sh "docker push ${TAG_STAGING}"
+          sh "echo ${TAG_IMAGE}"
+          //sh "docker pull ${TAG_IMAGE}"
+          //sh "docker tag ${TAG_IMAGE} ${TAG_PASSED}"
+          //sh "docker push ${TAG_PASSED}"
         }
       }
     }
