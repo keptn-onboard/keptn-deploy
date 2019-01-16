@@ -116,7 +116,7 @@ pipeline {
         container('docker'){
           sh "cd config && cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//' > image.txt"
           script {
-            TAG_DEV = readFile('config\image.txt')
+            TAG_DEV = readFile('config/image.txt')
           }
           sh "echo ${TAG_DEV}"
           sh "docker pull ${TAG_DEV}"
