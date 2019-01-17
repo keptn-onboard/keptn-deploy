@@ -107,16 +107,19 @@ pipeline {
           sh "cd config && cat ${env.APP_NAME}.yml | grep image:.*#image-green | sed 's/[ \t]*image:[ \t]*//' | sed 's/[ \t]*#image-green//' > image.txt"
           script {
             IMAGE_TAG = readFile('config/image.txt').trim() //10.43.249.155:5000/library/sockshop/carts:pr-31
-            println(IMAGE_TAG)
             PULL_REQUEST = IMAGE_TAG
+            //println(IMAGE_TAG)
+            
             def array = IMAGE_TAG.split(':')
             STABLE_TAG = ''
+
             for (i = 0; i < array.length-1; i++) {
               STABLE_TAG += array[i]
               STABLE_TAG += ':'
             }
             STABLE_TAG += 'staging-stable'
-            println(STABLE_TAG)
+
+            //println(STABLE_TAG)
           }
           sh "echo ${IMAGE_TAG}"
           sh "echo ${STABLE_TAG}"
