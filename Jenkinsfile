@@ -34,11 +34,12 @@ pipeline {
         }
       }
     }
-    stage('Deploy to staging namespace') {
+    stage('Deploy to staging namespace and apply istio config') {
       steps {
         //checkout scm
         container('kubectl') {
           sh "cd config && kubectl -n staging apply -f ."
+          sh "cd config/istio && kubectl apply -f ."
         }
       }
     }  
@@ -109,7 +110,7 @@ pipeline {
             println(IMAGE_TAG)
             PULL_REQUEST = IMAGE_TAG
             def array = IMAGE_TAG.split(':')
-            def STABLE_TAG = ''
+            STABLE_TAG = ''
             for (i = 0; i < array.length-1; i++) {
               STABLE_TAG += array[i]
               STABLE_TAG += ':'
