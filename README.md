@@ -164,16 +164,14 @@ The following example shows a CloudEvent serialized as JSON:
 {
     "specversion" : "0.2",
     "type" : "sh.keptn.events.pullrequest.merged",
-    "source" : "https://github.com/keptn/sockshop/carts/pull/[pr-id]",
+    "source" : "https://github.com/org/project/pull/[pr-id]",
     "id" : "ADi3-DFDF-6785",
     "time" : "2018-04-05T17:31:00Z",
     "contenttype" : "application/json",
     "data" : {
-        "payload" : {
-            "pullrequest" : "pr-1",
-            "service" : "carts",
-            "branch" : "master"
-        }
+        "pullrequest_number" : "pr-1",
+        "project" : "carts",
+        "branch" : "master"
     }
 }
 ```
@@ -184,36 +182,32 @@ The following example shows a CloudEvent serialized as JSON:
 {
     "specversion" : "0.2",
     "type" : "sh.keptn.events.push",
-    "source" : "https://github.com/keptn/sockshop/config/",
+    "source" : "https://github.com/org/project/",
     "id" : "ADi3-DFDF-6784",
     "time" : "2018-04-05T17:31:00Z",
     "contenttype" : "application/json",
     "data" : {
-        "payload" : {
-            "service" : "carts",
-            "branch" : "dev"
-        }
+        "project" : "carts",
+        "branch" : "dev"
     }
 }
 ```
 
-### Deploy Event
+### Pipeline Event
 
 ``` JSON
 {
     "specversion" : "0.2",
-    "type" : "sh.keptn.events.deploy.finished",
-    "source" : "https://https://us-central1-sai-research.cloudfunctions.net/githubWebhookListener/",
+    "type" : "sh.keptn.events.config.pipeline.finished",
+    "source" : "https://jenkins-url.com/pipeline/job/14",
     "id" : "ADi3-DFDF-6712",
     "time" : "2018-04-05T17:31:00Z",
     "contenttype" : "application/json",
     "data" : {
-        "payload" : {
-            "status" : "success",
-            "environment" : "dev",
-            "service" : "carts",
-            "artifact" : "10.43.249.155:5000/library/sockshop/carts:pr-33"
-        }
+        "status" : "success",
+        "environment" : "dev",
+        "project" : "carts",
+        "artifact" : "10.43.249.155:5000/library/sockshop/carts:pr-33"
     }
 }
 ```
