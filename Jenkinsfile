@@ -108,6 +108,7 @@ pipeline {
             IMAGE_TAG = readFile('config/image.txt').trim() //10.43.249.155:5000/library/sockshop/carts:pr-31
             PULL_REQUEST = IMAGE_TAG
             def array = IMAGE_TAG.split(':')
+            def STABLE_TAG = ''
             for (i = 0; i < array.length-1; i++) {
               STABLE_TAG += array[i]
               STABLE_TAG += ':'
