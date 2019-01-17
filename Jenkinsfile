@@ -122,8 +122,8 @@ pipeline {
           }
           sh "echo ${IMAGE_TAG}"
           //sh "docker pull ${IMAGE_TAG}"
-          //sh "docker tag ${IMAGE_TAG} ${TAG_PASSED}"
-          //sh "docker push ${TAG_PASSED}"
+          //sh "docker tag ${IMAGE_TAG} ${PASSED_TAG}"
+          //sh "docker push ${PASSED_TAG}"
         }
       }
     }
