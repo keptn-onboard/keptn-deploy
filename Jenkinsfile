@@ -15,8 +15,9 @@ def tagMatchRules = [
 pipeline {
   parameters {
     string(name: 'APP_NAME', defaultValue: '', description: 'The name of the service to deploy.', trim: true)
-    string(name: 'TAG_STAGING', defaultValue: '', description: 'The image of the service to deploy.', trim: true)
-    string(name: 'VERSION', defaultValue: '', description: 'The version of the service to deploy.', trim: true)
+    //string(name: 'TAG_STAGING', defaultValue: '', description: 'The image of the service to deploy.', trim: true)
+    //string(name: 'TAG_DEV', defaultValue: '', description: '.', trim: true)
+    //string(name: 'VERSION', defaultValue: '', description: 'The version of the service to deploy.', trim: true)
   }
   agent {
     label 'kubegit'
@@ -35,12 +36,12 @@ pipeline {
     }
     stage('Deploy to staging namespace') {
       steps {
-        checkout scm
+        //checkout scm
         container('kubectl') {
           sh "cd config && kubectl -n staging apply -f ."
         }
       }
-    }
+    }  
     stage('DT Deploy Event') {
       steps {
         container("curl") {
@@ -50,7 +51,7 @@ pipeline {
               tagRule : tagMatchRules,
               customProperties : [
                 [key: 'Jenkins Build Number', value: "${env.BUILD_ID}"],
-                [key: 'Git commit', value: "${env.GIT_COMMIT}"]
+                //[key: 'Git commit', value: "${env.GIT_COMMIT}"]
               ]
             )
           }
@@ -108,32 +109,27 @@ pipeline {
         }
       }
     }
-    stage('Commit Configuration change') {
+    stage('Get Artifact ID and promote deployment for stable') { // and mark artifact as staging-passed
       steps {
-        container('git') {
-          withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-            sh "rm -rf config"
-            sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
-            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
-            sh "cd config && git checkout production"
-            /* sh "cd config && git checkout -b pr/${env.PR_BRANCH}" */
-            sh "cd config && sed -i 's~image: .* #image-green~image: ${env.TAG_STAGING} #image-green~' ${env.APP_NAME}.yml"
-            sh "cd config && git add ."
-            sh "cd config && git commit -am 'updated config for ${env.APP_NAME}'"
-            sh "cd config && git push"
-            /* sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}" */
+        container('docker'){
+          sh "cd config && cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//' > image.txt"
+          script {
+            IMAGE_TAG = readFile('config/image.txt').trim()
+            //PASSED_TAG = 
+            PULL_REQUEST = IMAGE_TAG
           }
+          sh "echo ${IMAGE_TAG}"
+          sh "docker pull ${IMAGE_TAG}"
+          sh "docker tag ${IMAGE_TAG} ${env.APP_NAME}:staging-stable"
+          sh "docker push ${IMAGE_TAG}"
         }
       }
     }
-    stage('Deploy to production') {
-      steps {
-        build job: "${env.GITHUB_ORGANIZATION}/deploy/production",
-          parameters: [
-            string(name: 'APP_NAME', value: "${env.APP_NAME}"),
-            string(name: 'TAG_STAGING', value: "${env.TAG_STAGING}"),
-            string(name: 'VERSION', value: "${env.VERSION}")
-          ]
+  }
+  post {
+    always {
+      container("curl") {
+        sh "curl -X POST \"https://us-central1-sai-research.cloudfunctions.net/jenkinsNotificationListener\" -H \"accept: application/json\" -H \"Content-Type: application/json\" -d \"{ \\\"status\\\": \\\"success\\\", \\\"environment\\\": \\\"staging\\\", \\\"service\\\": \\\"${env.APP_NAME}\\\", \\\"pull_request\\\": \\\"${PULL_REQUEST}\\\"}\" "       
       }
     }
   }
