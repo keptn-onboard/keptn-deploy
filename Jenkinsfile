@@ -24,34 +24,6 @@ pipeline {
     label 'kubegit'
   }
   stages {
-    stage('Change and commit staging configuration') {
-      when {
-        expression {
-          return env.ENVIRONMENT ==~ 'staging' 
-        }
-      }
-      steps {
-        container('git') {
-          script {
-            ARTEFACT_ID = "sockshop/" + "${env.APP_NAME}"
-            BASE_TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}"
-            IMAGE_TAG = "${BASE_TAG}:${env.PULL_REQUEST}"
-          }
-          withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-            sh "rm -rf config"
-            sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
-            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
-            sh "cd config && git checkout staging"
-            /* sh "cd config && git checkout -b pr/${env.PR_BRANCH}" */
-            sh "cd config && sed -i 's#image: .*#image: ${IMAGE_TAG}#' ${env.APP_NAME}.yml"
-            sh "cd config && git add ."
-            sh "cd config && git commit -am '[CI-UPDATECONFIG] Updated config for: ${env.APP_NAME}'"
-            sh "cd config && git push"
-            /* sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}" */
-          }
-        }
-      }
-    }
     stage('Change and commit dev configuration') {
       when {
         expression {
@@ -76,6 +48,34 @@ pipeline {
             sh "cd config && git commit -am '[CI-UPDATECONFIG] Updated config for: ${env.APP_NAME}'"
             sh "cd config && git push"
             /* sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}" */
+          }
+        }
+      }
+    }
+    stage('Change and commit staging configuration') {
+      when {
+        expression {
+          return env.ENVIRONMENT ==~ 'staging' 
+        }
+      }
+      steps {
+        container('git') {
+          script {
+            ARTEFACT_ID = "sockshop/" + "${env.APP_NAME}"
+            BASE_TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}"
+            IMAGE_TAG = "${BASE_TAG}:${env.PULL_REQUEST}"
+          }
+          withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+            sh "rm -rf config"
+            sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
+            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
+            sh "cd config && git checkout staging"
+            // sh "cd config && git checkout -b pr/${env.PR_BRANCH}" 
+            sh "cd config && sed -i 's~image: .* #image-green~image: ${env.TAG_STAGING} #image-green~' ${env.APP_NAME}.yml"
+            sh "cd config && git add ."
+            sh "cd config && git commit -am '[CI-UPDATECONFIG] Updated config for: ${env.APP_NAME}'"
+            sh "cd config && git push"
+            // sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}"  
           }
         }
       }
