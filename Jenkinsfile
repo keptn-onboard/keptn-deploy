@@ -100,16 +100,7 @@ pipeline {
       }
     }
     */
-    stage('Promote deployment and artifact for stable') {
-      steps {
-        container('docker'){
-          sh "docker pull ${env.TAG_STAGING}"
-          sh "docker tag ${env.TAG_STAGING} ${env.APP_NAME}:staging-stable"
-          sh "docker push ${env.TAG_STAGING}"
-        }
-      }
-    }
-    stage('Get Artifact ID and promote deployment for stable') { // and mark artifact as staging-passed
+    stage('Get artifact ID and promote deployment for stable') { // and mark artifact as staging-passed
       steps {
         container('docker'){
           sh "cd config && cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//' > image.txt"
