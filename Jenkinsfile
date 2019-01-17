@@ -111,18 +111,18 @@ pipeline {
       }
     }
     */
-    stage('Get Artifact ID') {
+    stage('Get Artifact ID') { // and mark artifact as dev-passed
       steps {
         container('docker'){
           sh "cd config && cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//' > image.txt"
           script {
-            TAG_IMAGE = readFile('config/image.txt').trim()
-            //TAG_PASSED = 
-            PULL_REQUEST = TAG_IMAGE
+            IMAGE_TAG = readFile('config/image.txt').trim()
+            //PASSED_TAG = 
+            PULL_REQUEST = IMAGE_TAG
           }
-          sh "echo ${TAG_IMAGE}"
-          //sh "docker pull ${TAG_IMAGE}"
-          //sh "docker tag ${TAG_IMAGE} ${TAG_PASSED}"
+          sh "echo ${IMAGE_TAG}"
+          //sh "docker pull ${IMAGE_TAG}"
+          //sh "docker tag ${IMAGE_TAG} ${TAG_PASSED}"
           //sh "docker push ${TAG_PASSED}"
         }
       }
