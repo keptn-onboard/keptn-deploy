@@ -106,7 +106,6 @@ pipeline {
           sh "cd config && cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//' > image.txt"
           script {
             IMAGE_TAG = readFile('config/image.txt').trim()
-            //PASSED_TAG = 
             PULL_REQUEST = IMAGE_TAG
           }
           sh "echo ${IMAGE_TAG}"
