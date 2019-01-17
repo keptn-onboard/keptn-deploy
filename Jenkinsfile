@@ -103,7 +103,7 @@ pipeline {
       steps {
         container('docker'){
           sh "docker pull ${env.TAG_STAGING}"
-          sh "docker tag ${env.TAG_STAGING} ${env.APP_NAME}-staging-stable"
+          sh "docker tag ${env.TAG_STAGING} ${env.APP_NAME}:staging-stable"
           sh "docker push ${env.TAG_STAGING}"
         }
       }
