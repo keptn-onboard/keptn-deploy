@@ -52,10 +52,10 @@ pipeline {
         }
       }
     }
-    stage('Change and commit staging configuration') {
+    stage('Change and commit staging or production configuration') {
       when {
         expression {
-          return env.ENVIRONMENT ==~ 'staging' 
+          return env.ENVIRONMENT ==~ 'staging' || env.ENVIRONMENT ==~ 'production'
         }
       }
       steps {
@@ -69,7 +69,7 @@ pipeline {
             sh "rm -rf config"
             sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
             sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
-            sh "cd config && git checkout staging"
+            sh "cd config && git checkout ${env.ENVIRONMENT}"
             // sh "cd config && git checkout -b pr/${env.PR_BRANCH}" 
             sh "cd config && sed -i 's~image: .* #image-green~image: ${IMAGE_TAG} #image-green~' ${env.APP_NAME}.yml"
             sh "cd config && git add ."
