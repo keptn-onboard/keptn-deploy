@@ -103,7 +103,7 @@ pipeline {
     stage('Get artifact ID and promote deployment for stable') { // and mark artifact as staging-passed
       steps {
         container('docker'){
-          sh "cd config && cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//' > image.txt"
+          sh "cd config && cat ${env.APP_NAME}.yml | grep image:.*#image-green | sed 's/[ \t]*image:[ \t]*//' | sed 's/[ \t]*#image-green//' > image.txt"
           script {
             IMAGE_TAG = readFile('config/image.txt').trim()
             PULL_REQUEST = IMAGE_TAG
