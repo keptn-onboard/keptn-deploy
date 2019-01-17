@@ -13,6 +13,8 @@ def tagMatchRules = [
 ]
 
 def IMAGE_TAG = 'UNKNOWN'
+def ARTEFACT_ID = 'UNKNOWN'
+def BASE_TAG = 'UNKNOWN'
 
 pipeline {
   parameters {
