@@ -106,6 +106,7 @@ pipeline {
           sh "cd config && cat ${env.APP_NAME}.yml | grep image:.*#image-green | sed 's/[ \t]*image:[ \t]*//' | sed 's/[ \t]*#image-green//' > image.txt"
           script {
             IMAGE_TAG = readFile('config/image.txt').trim() //10.43.249.155:5000/library/sockshop/carts:pr-31
+            println(IMAGE_TAG)
             PULL_REQUEST = IMAGE_TAG
             def array = IMAGE_TAG.split(':')
             def STABLE_TAG = ''
@@ -113,6 +114,7 @@ pipeline {
               STABLE_TAG += array[i]
               STABLE_TAG += ':'
             }
+            println(STABLE_TAG)
             STABLE_TAG += "staging-stable"
           }
           sh "echo ${STABLE_TAG}"
