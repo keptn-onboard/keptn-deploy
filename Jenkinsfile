@@ -12,12 +12,13 @@ def tagMatchRules = [
   ]
 ]
 
+def IMAGE_TAG = 'UNKNOWN'
+def PULL_REQUEST = 'UNKNOWN'
+def STABLE_TAG = 'UNKNOWN'
+
 pipeline {
   parameters {
     string(name: 'APP_NAME', defaultValue: '', description: 'The name of the service to deploy.', trim: true)
-    //string(name: 'TAG_STAGING', defaultValue: '', description: 'The image of the service to deploy.', trim: true)
-    //string(name: 'TAG_DEV', defaultValue: '', description: '.', trim: true)
-    //string(name: 'VERSION', defaultValue: '', description: 'The version of the service to deploy.', trim: true)
   }
   agent {
     label 'kubegit'
@@ -36,7 +37,6 @@ pipeline {
     }
     stage('Deploy to dev namespace') {
       steps {
-        //checkout scm
         container('kubectl') {
           sh "cd config && kubectl -n dev apply -f ."
         }
@@ -111,52 +111,34 @@ pipeline {
       }
     }
     */
-    stage('Get Artifact ID') { // and mark artifact as dev-passed
+    stage('Get artifact ID and mark deployment as dev-stable') { 
       steps {
         container('docker'){
           sh "cd config && cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//' > image.txt"
           script {
             IMAGE_TAG = readFile('config/image.txt').trim()
-            //PASSED_TAG = 
             PULL_REQUEST = IMAGE_TAG
+            //println(IMAGE_TAG)
+            
+            def array = IMAGE_TAG.split(':')
+            STABLE_TAG = ''
+
+            for (i = 0; i < array.length-1; i++) {
+              STABLE_TAG += array[i]
+              STABLE_TAG += ':'
+            }
+            STABLE_TAG += 'dev-stable'
+
+            //println(STABLE_TAG)
           }
           sh "echo ${IMAGE_TAG}"
-          //sh "docker pull ${IMAGE_TAG}"
-          //sh "docker tag ${IMAGE_TAG} ${PASSED_TAG}"
-          //sh "docker push ${PASSED_TAG}"
+          sh "echo ${STABLE_TAG}"
+          sh "docker pull ${IMAGE_TAG}"
+          sh "docker tag ${IMAGE_TAG} ${STABLE_TAG}"
+          sh "docker push ${STABLE_TAG}"
         }
       }
     }
-    /*
-    stage('Commit Configuration change') {
-      steps {
-        container('git') {
-          withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-            sh "rm -rf config"
-            sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
-            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
-            sh "cd config && git checkout staging"
-            // sh "cd config && git checkout -b pr/${env.PR_BRANCH}" 
-            sh "cd config && sed -i 's~image: .* #image-green~image: ${env.TAG_STAGING} #image-green~' ${env.APP_NAME}.yml"
-            sh "cd config && git add ."
-            sh "cd config && git commit -am 'updated config for ${env.APP_NAME}'"
-            sh "cd config && git push"
-            // sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}" 
-          }
-        }
-      }
-    }
-    stage('Deploy to staging') {
-      steps {
-        build job: "${env.GITHUB_ORGANIZATION}/deploy/staging",
-          parameters: [
-            string(name: 'APP_NAME', value: "${env.APP_NAME}"),
-            string(name: 'TAG_STAGING', value: "${env.TAG_STAGING}"),
-            string(name: 'VERSION', value: "${env.VERSION}")
-          ]
-      }
-    }
-    */
   }
   post {
     always {
