@@ -105,13 +105,19 @@ pipeline {
         container('docker'){
           sh "cd config && cat ${env.APP_NAME}.yml | grep image:.*#image-green | sed 's/[ \t]*image:[ \t]*//' | sed 's/[ \t]*#image-green//' > image.txt"
           script {
-            IMAGE_TAG = readFile('config/image.txt').trim()
+            IMAGE_TAG = readFile('config/image.txt').trim() //10.43.249.155:5000/library/sockshop/carts:pr-31
             PULL_REQUEST = IMAGE_TAG
+            def array = IMAGE_TAG.split(':')
+            for (i = 0; i < array.length-1; i++) {
+              STABLE_TAG += array[i]
+              STABLE_TAG += ':'
+            }
+            STABLE_TAG += "staging-stable"
           }
-          sh "echo ${IMAGE_TAG}"
+          sh "echo ${STABLE_TAG}"
           sh "docker pull ${IMAGE_TAG}"
-          sh "docker tag ${IMAGE_TAG} ${env.APP_NAME}:staging-stable"
-          sh "docker push ${IMAGE_TAG}"
+          sh "docker tag ${IMAGE_TAG} ${STABLE_TAG}"
+          sh "docker push ${STABLE_TAG}"
         }
       }
     }
