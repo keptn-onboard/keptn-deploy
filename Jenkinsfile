@@ -12,6 +12,10 @@ def tagMatchRules = [
   ]
 ]
 
+def IMAGE_TAG = 'UNKNOWN'
+def PULL_REQUEST = 'UNKNOWN'
+def STABLE_TAG = 'UNKNOWN'
+
 pipeline {
   parameters {
     string(name: 'APP_NAME', defaultValue: '', description: 'The name of the service to deploy.', trim: true)
@@ -33,9 +37,9 @@ pipeline {
     }
     stage('Deploy to staging namespace and apply istio config') {
       steps {
-        //checkout scm
         container('kubectl') {
           sh "cd config && kubectl -n staging apply -f ."
+
           sh "cd config/istio && kubectl apply -f ."
         }
       }
@@ -98,12 +102,12 @@ pipeline {
       }
     }
     */
-    stage('Get artifact ID and promote deployment for stable') { // and mark artifact as staging-passed
+    stage('Get artifact ID and promote deployment as staging-passed') {
       steps {
         container('docker'){
           sh "cd config && cat ${env.APP_NAME}.yml | grep image:.*#image-green | sed 's/[ \t]*image:[ \t]*//' | sed 's/[ \t]*#image-green//' > image.txt"
           script {
-            IMAGE_TAG = readFile('config/image.txt').trim() //10.43.249.155:5000/library/sockshop/carts:pr-31
+            IMAGE_TAG = readFile('config/image.txt').trim()
             PULL_REQUEST = IMAGE_TAG
             //println(IMAGE_TAG)
             
