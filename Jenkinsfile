@@ -29,7 +29,7 @@ pipeline {
         container('git') {
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
             sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
-            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
+            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/keptn-config"
             sh "cd config && git checkout dev"
           }
         }
@@ -113,6 +113,16 @@ pipeline {
     */
     stage('Get artifact ID and mark deployment as dev-stable') { 
       steps {
+        container('yq') {
+          sh "cd keptn-config/helm-chart && yq r values.yml ${env.APP_NAME}.image.tag' > image-tag.txt"
+          sh "cd keptn-config/helm-chart && yq r values.yml ${env.APP_NAME}.image.repository' > image-repository.txt"
+          script {
+            IMAGE_REPOSITORY = readFile('keptn-config/helm-chart/image-repository.txt').trim()
+            IMAGE_TAG = readFile('keptn-config/helm-chart/image-tag.txt').trim()
+            PULL_REQUEST = IMAGE_REPOSITORY + ':' + IMAGE_TAG
+            STABLE_TAG = IMAGE_REPOSITORY + ':dev-stable'
+          }   
+        }
         container('docker'){
           sh "cd config && cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//' > image.txt"
           script {
@@ -133,8 +143,8 @@ pipeline {
           }
           sh "echo ${IMAGE_TAG}"
           sh "echo ${STABLE_TAG}"
-          sh "docker pull ${IMAGE_TAG}"
-          sh "docker tag ${IMAGE_TAG} ${STABLE_TAG}"
+          sh "docker pull ${IMAGE_REPOSITORY}:${IMAGE_TAG}"
+          sh "docker tag ${IMAGE_REPOSITORY}:${IMAGE_TAG} ${STABLE_TAG}"
           sh "docker push ${STABLE_TAG}"
         }
       }
