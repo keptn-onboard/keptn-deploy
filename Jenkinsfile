@@ -37,10 +37,15 @@ pipeline {
     }
     stage('Deploy to production namespace and apply istio config') {
       steps {
-        container('kubectl') {
-          sh "cd config && kubectl -n production apply -f ."
-          sh "cd config/istio && kubectl apply -f ."
+        container('helm') {
+          sh "cd keptn-config && helm dep update helm-chart/"
+          sh "cd keptn-config && helm upgrade --install ${env.GITHUB_ORGANIZATION} ./helm-chart --namespace production"
         }
+        /*
+        container('kubectl') {
+          sh "cd keptn-/istio && kubectl apply -f ."
+        }
+        */
       }
     }  
     stage('DT Deploy Event') {
