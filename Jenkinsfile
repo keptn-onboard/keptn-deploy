@@ -68,8 +68,8 @@ pipeline {
     stage('Get artifact ID and promote deployment as production stable') { 
       steps {
         container('yq') {
-          sh "cd keptn-config/helm-chart && yq r values.yml ${env.APP_NAME}Green.image.tag' > image-tag.txt"
-          sh "cd keptn-config/helm-chart && yq r values.yml ${env.APP_NAME}Green.image.repository' > image-repository.txt"
+          sh "cd keptn-config/helm-chart && yq r values.yml ${env.APP_NAME}Green.image.tag > image-tag.txt"
+          sh "cd keptn-config/helm-chart && yq r values.yml ${env.APP_NAME}Green.image.repository > image-repository.txt"
           script {
             IMAGE_REPOSITORY = readFile('keptn-config/helm-chart/image-repository.txt').trim()
             IMAGE_TAG = readFile('keptn-config/helm-chart/image-tag.txt').trim()
