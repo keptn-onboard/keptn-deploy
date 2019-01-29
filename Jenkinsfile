@@ -35,7 +35,7 @@ pipeline {
       steps {
         container('git') {
           script {
-            ARTEFACT_ID = "sockshop/" + "${env.APP_NAME}"
+            ARTEFACT_ID = "${env.GITHUB_ORGANIZATION}/" + "${env.APP_NAME}"
             BASE_TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}"
             IMAGE_TAG = "${BASE_TAG}:${env.PULL_REQUEST}"
           }
@@ -63,7 +63,7 @@ pipeline {
       steps {
         container('git') {
           script {
-            ARTEFACT_ID = "sockshop/" + "${env.APP_NAME}"
+            ARTEFACT_ID = "${env.GITHUB_ORGANIZATION}/" + "${env.APP_NAME}"
             BASE_TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}"
             IMAGE_TAG = "${BASE_TAG}:${env.PULL_REQUEST}"
           }
@@ -91,7 +91,7 @@ pipeline {
       steps {
         container('git') {
           script {
-            ARTEFACT_ID = "sockshop/" + "${env.APP_NAME}"
+            ARTEFACT_ID = "${env.GITHUB_ORGANIZATION}/" + "${env.APP_NAME}"
             BASE_TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}"
             IMAGE_TAG = "${BASE_TAG}:${env.PULL_REQUEST}"
           }
