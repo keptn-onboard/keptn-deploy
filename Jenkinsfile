@@ -84,6 +84,7 @@ pipeline {
           }
         }
         container('yq') {
+          sh "cd keptn-config && yq w -i helm-chart/values.yaml ${env.APP_NAME}Blue.image.repository ${BASE_TAG}"
           sh "cd keptn-config && yq w -i helm-chart/values.yaml ${env.APP_NAME}Green.image.repository ${BASE_TAG}"
           sh "cd keptn-config && yq w -i helm-chart/values.yaml ${env.APP_NAME}Green.image.tag ${env.PULL_REQUEST}"
         }
@@ -119,6 +120,7 @@ pipeline {
           }
         }
         container('yq') {
+          sh "cd keptn-config && yq w -i helm-chart/values.yaml ${env.APP_NAME}Blue.image.repository ${BASE_TAG}"
           sh "cd keptn-config && yq w -i helm-chart/values.yaml ${env.APP_NAME}Green.image.repository ${BASE_TAG}"
           sh "cd keptn-config && yq w -i helm-chart/values.yaml ${env.APP_NAME}Green.image.tag ${env.PULL_REQUEST}"
         }
