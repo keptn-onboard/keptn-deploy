@@ -124,23 +124,6 @@ pipeline {
           }   
         }
         container('docker'){
-          sh "cd config && cat ${env.APP_NAME}.yml | grep image: | sed 's/[ \t]*image:[ \t]*//' > image.txt"
-          script {
-            IMAGE_TAG = readFile('config/image.txt').trim()
-            PULL_REQUEST = IMAGE_TAG
-            //println(IMAGE_TAG)
-            
-            def array = IMAGE_TAG.split(':')
-            STABLE_TAG = ''
-
-            for (i = 0; i < array.length-1; i++) {
-              STABLE_TAG += array[i]
-              STABLE_TAG += ':'
-            }
-            STABLE_TAG += 'dev-stable'
-
-            //println(STABLE_TAG)
-          }
           sh "echo ${IMAGE_TAG}"
           sh "echo ${STABLE_TAG}"
           sh "docker pull ${IMAGE_REPOSITORY}:${IMAGE_TAG}"
