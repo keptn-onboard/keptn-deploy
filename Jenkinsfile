@@ -19,7 +19,7 @@ def BASE_TAG = 'UNKNOWN'
 pipeline {
   parameters {
     string(name: 'APP_NAME', defaultValue: '', description: 'The name of the service to deploy.', trim: true)
-    string(name: 'IMAGE', defaultValue: '', description: 'The name of the container image to deploy.', truem: true)
+    string(name: 'IMAGE', defaultValue: '', description: 'The name of the container image to deploy.', trim: true)
     string(name: 'PULL_REQUEST', defaultValue: '', description: 'The pull request id.', trim: true)
     string(name: 'ENVIRONMENT', defaultValue: '', description: 'The env for which to change the configuration.', trim: true)
   }
