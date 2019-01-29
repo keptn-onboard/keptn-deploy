@@ -80,8 +80,15 @@ pipeline {
             sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
             sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/keptn-config"
             sh "cd keptn-config && git checkout ${env.ENVIRONMENT}"
-            // sh "cd keptn-config && git checkout -b pr/${env.PR_BRANCH}" 
-            sh "cd keptn-config && sed -i 's~image: .* #image-green~image: ${IMAGE_TAG} #image-green~' ${env.APP_NAME}.yml"
+            // sh "cd keptn-config && git checkout -b pr/${env.PR_BRANCH}"
+          }
+        }
+        container('yq') {
+          sh "cd keptn-config && yq w -i helm-chart/values.yaml ${env.APP_NAME}Green.image.repository ${BASE_TAG}"
+          sh "cd keptn-config && yq w -i helm-chart/values.yaml ${env.APP_NAME}Green.image.tag ${env.PULL_REQUEST}"
+        }
+        container('git') {
+          withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) { 
             sh "cd keptn-config && git add ."
             sh "cd keptn-config && git commit -am '[CI-UPDATECONFIG] Updated config for: ${env.APP_NAME}'"
             sh "cd keptn-config && git push"
