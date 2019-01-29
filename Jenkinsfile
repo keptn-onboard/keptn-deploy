@@ -38,6 +38,7 @@ pipeline {
     stage('Deploy to production namespace and apply istio config') {
       steps {
         container('helm') {
+          sh "helm init --client-only"
           sh "cd keptn-config && helm dep update helm-chart/"
           sh "cd keptn-config && helm upgrade --install ${env.GITHUB_ORGANIZATION} ./helm-chart --namespace production"
         }
