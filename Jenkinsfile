@@ -116,7 +116,7 @@ pipeline {
     stage('Get artifact ID and mark deployment as dev-stable') { 
       steps {
         container('yq') {
-          sh "cd keptn-config/helm-chart && yq r values.yml ${env.APP_NAME}.image.tag' > image-tag.txt"
+          sh "cd keptn-config/helm-chart && yq r values.yml ${env.APP_NAME}.image.tag > image-tag.txt"
           sh "cd keptn-config/helm-chart && yq r values.yml ${env.APP_NAME}.image.repository' > image-repository.txt"
           script {
             IMAGE_REPOSITORY = readFile('keptn-config/helm-chart/image-repository.txt').trim()
