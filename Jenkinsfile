@@ -41,16 +41,16 @@ pipeline {
             IMAGE_TAG = "${BASE_TAG}:${env.PULL_REQUEST}"
           }
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-            sh "rm -rf config"
+            sh "rm -rf keptn-config"
             sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
-            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
-            sh "cd config && git checkout dev"
-            /* sh "cd config && git checkout -b pr/${env.PR_BRANCH}" */
-            sh "cd config && sed -i 's#image: .*#image: ${IMAGE_TAG}#' ${env.APP_NAME}.yml"
-            sh "cd config && git add ."
-            sh "cd config && git commit -am '[CI-UPDATECONFIG] Updated config for: ${env.APP_NAME}'"
-            sh "cd config && git push"
-            /* sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}" */
+            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/keptn-config"
+            sh "cd keptn-config && git checkout dev"
+            /* sh "cd keptn-config && git checkout -b pr/${env.PR_BRANCH}" */
+            sh "cd keptn-config && sed -i 's#image: .*#image: ${IMAGE_TAG}#' ${env.APP_NAME}.yml"
+            sh "cd keptn-config && git add ."
+            sh "cd keptn-config && git commit -am '[CI-UPDATECONFIG] Updated config for: ${env.APP_NAME}'"
+            sh "cd keptn-config && git push"
+            /* sh "cd keptn-config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/keptn-config pr/${env.PR_BRANCH}" */
           }
         }
       }
@@ -69,16 +69,16 @@ pipeline {
             IMAGE_TAG = "${BASE_TAG}:${env.PULL_REQUEST}"
           }
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-            sh "rm -rf config"
+            sh "rm -rf keptn-config"
             sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
-            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
-            sh "cd config && git checkout ${env.ENVIRONMENT}"
-            // sh "cd config && git checkout -b pr/${env.PR_BRANCH}" 
-            sh "cd config && sed -i 's~image: .* #image-green~image: ${IMAGE_TAG} #image-green~' ${env.APP_NAME}.yml"
-            sh "cd config && git add ."
-            sh "cd config && git commit -am '[CI-UPDATECONFIG] Updated config for: ${env.APP_NAME}'"
-            sh "cd config && git push"
-            // sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}"  
+            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/keptn-config"
+            sh "cd keptn-config && git checkout ${env.ENVIRONMENT}"
+            // sh "cd keptn-config && git checkout -b pr/${env.PR_BRANCH}" 
+            sh "cd keptn-config && sed -i 's~image: .* #image-green~image: ${IMAGE_TAG} #image-green~' ${env.APP_NAME}.yml"
+            sh "cd keptn-config && git add ."
+            sh "cd keptn-config && git commit -am '[CI-UPDATECONFIG] Updated config for: ${env.APP_NAME}'"
+            sh "cd keptn-config && git push"
+            // sh "cd keptn-config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/keptn-config pr/${env.PR_BRANCH}"  
           }
         }
       }
@@ -97,16 +97,16 @@ pipeline {
             IMAGE_TAG = "${BASE_TAG}:${env.PULL_REQUEST}"
           }
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-            sh "rm -rf config"
+            sh "rm -rf keptn-config"
             sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
-            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config"
-            sh "cd config && git checkout ${env.ENVIRONMENT}"
-            // sh "cd config && git checkout -b pr/${env.PR_BRANCH}" 
-            sh "cd config && sed -i 's~image: .* #image-green~image: ${IMAGE_TAG} #image-green~' ${env.APP_NAME}.yml"
-            sh "cd config && git add ."
-            sh "cd config && git commit -am '[CI-UPDATECONFIG] Updated config for: ${env.APP_NAME}'"
-            sh "cd config && git push"
-            // sh "cd config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/config pr/${env.PR_BRANCH}"  
+            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/keptn-config"
+            sh "cd keptn-config && git checkout ${env.ENVIRONMENT}"
+            // sh "cd keptn-config && git checkout -b pr/${env.PR_BRANCH}" 
+            sh "cd keptn-config && sed -i 's~image: .* #image-green~image: ${IMAGE_TAG} #image-green~' ${env.APP_NAME}.yml"
+            sh "cd keptn-config && git add ."
+            sh "cd keptn-config && git commit -am '[CI-UPDATECONFIG] Updated config for: ${env.APP_NAME}'"
+            sh "cd keptn-config && git push"
+            // sh "cd keptn-config && git push --set-upstream https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/keptn-config pr/${env.PR_BRANCH}"  
           }
         }
       }
