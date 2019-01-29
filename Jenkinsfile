@@ -38,6 +38,7 @@ pipeline {
     stage('Deploy to dev namespace') {
       steps {
         container('helm') {
+          sh "cd keptn-config && helm dep update helm-chart/"
           sh "cd keptn-config && helm upgrade --install ${env.GITHUB_ORGANIZATION} ./helm-chart --namespace dev"
         }
       }
