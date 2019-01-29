@@ -19,6 +19,7 @@ def BASE_TAG = 'UNKNOWN'
 pipeline {
   parameters {
     string(name: 'APP_NAME', defaultValue: '', description: 'The name of the service to deploy.', trim: true)
+    string(name: 'IMAGE', defaultValue: '', description: 'The name of the container image to deploy.', truem: true)
     string(name: 'PULL_REQUEST', defaultValue: '', description: 'The pull request id.', trim: true)
     string(name: 'ENVIRONMENT', defaultValue: '', description: 'The env for which to change the configuration.', trim: true)
   }
@@ -35,7 +36,7 @@ pipeline {
       steps {
         container('git') {
           script {
-            ARTEFACT_ID = "${env.GITHUB_ORGANIZATION}/" + "${env.APP_NAME}"
+            ARTEFACT_ID = "${env.GITHUB_ORGANIZATION}/" + "${env.IMAGE}"
             BASE_TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}"
             IMAGE_TAG = "${BASE_TAG}:${env.PULL_REQUEST}"
           }
