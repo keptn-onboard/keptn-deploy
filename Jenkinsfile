@@ -104,24 +104,17 @@ pipeline {
     */
     stage('Get artifact ID and promote deployment as staging-passed') {
       steps {
-        container('docker'){
-          sh "cd config && cat ${env.APP_NAME}.yml | grep image:.*#image-green | sed 's/[ \t]*image:[ \t]*//' | sed 's/[ \t]*#image-green//' > image.txt"
+        container('yq') {
+          sh "cd keptn-config/helm-chart && yq r values.yml ${env.APP_NAME}Green.image.tag' > image-tag.txt"
+          sh "cd keptn-config/helm-chart && yq r values.yml ${env.APP_NAME}Green.image.repository' > image-repository.txt"
           script {
-            IMAGE_TAG = readFile('config/image.txt').trim()
-            PULL_REQUEST = IMAGE_TAG
-            //println(IMAGE_TAG)
-            
-            def array = IMAGE_TAG.split(':')
-            STABLE_TAG = ''
-
-            for (i = 0; i < array.length-1; i++) {
-              STABLE_TAG += array[i]
-              STABLE_TAG += ':'
-            }
-            STABLE_TAG += 'staging-stable'
-
-            //println(STABLE_TAG)
-          }
+            IMAGE_REPOSITORY = readFile('keptn-config/helm-chart/image-repository.txt').trim()
+            IMAGE_TAG = readFile('keptn-config/helm-chart/image-tag.txt').trim()
+            PULL_REQUEST = IMAGE_REPOSITORY + ':' + IMAGE_TAG
+            STABLE_TAG = IMAGE_REPOSITORY + ':staging-stable'
+          }   
+        }
+        container('docker'){
           sh "echo ${IMAGE_TAG}"
           sh "echo ${STABLE_TAG}"
           sh "docker pull ${IMAGE_TAG}"
