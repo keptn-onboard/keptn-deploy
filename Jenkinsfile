@@ -134,7 +134,7 @@ pipeline {
   post {
     always {
       container("curl") {
-        sh "curl -X POST \"https://us-central1-sai-research.cloudfunctions.net/jenkinsNotificationListener\" -H \"accept: application/json\" -H \"Content-Type: application/json\" -d \"{ \\\"status\\\": \\\"success\\\", \\\"environment\\\": \\\"staging\\\", \\\"service\\\": \\\"${env.APP_NAME}\\\", \\\"pull_request\\\": \\\"${PULL_REQUEST}\\\"}\" "       
+        sh "curl -X POST \"https://us-central1-sai-research.cloudfunctions.net/jenkinsNotificationListener\" -H \"accept: application/json\" -H \"Content-Type: application/json\" -d \"{ \\\"status\\\": \\\"success\\\", \\\"environment\\\": \\\"staging\\\", \\\"service\\\": \\\"${env.APP_NAME}\\\", \\\"github_org\\\": \\\"${env.GITHUB_ORGANIZATION}\\\", \\\"pull_request\\\": \\\"${PULL_REQUEST}\\\"}\" "       
       }
     }
   }
