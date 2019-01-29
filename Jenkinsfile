@@ -30,7 +30,7 @@ pipeline {
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
             sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
             sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.GITHUB_ORGANIZATION}/keptn-config"
-            sh "cd config && git checkout dev"
+            sh "cd keptn-config && git checkout dev"
           }
         }
       }
@@ -38,7 +38,7 @@ pipeline {
     stage('Deploy to dev namespace') {
       steps {
         container('kubectl') {
-          sh "cd config && kubectl -n dev apply -f ."
+          sh "cd keptn-config && kubectl -n dev apply -f ."
         }
       }
     }  
