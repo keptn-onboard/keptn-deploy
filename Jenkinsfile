@@ -40,7 +40,7 @@ pipeline {
         container('helm') {
           sh "helm init --client-only"
           sh "cd keptn-config && helm dep update helm-chart/"
-          sh "cd keptn-config && helm upgrade --install ${env.GITHUB_ORGANIZATION} ./helm-chart --namespace staging"
+          sh "cd keptn-config && helm upgrade --install ${env.GITHUB_ORGANIZATION}-staging ./helm-chart --namespace staging"
         }
         /*
         container('kubectl') {
