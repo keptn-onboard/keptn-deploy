@@ -122,8 +122,8 @@ pipeline {
         container('docker'){
           sh "echo ${IMAGE_TAG}"
           sh "echo ${STABLE_TAG}"
-          sh "docker pull ${IMAGE_TAG}"
-          sh "docker tag ${IMAGE_TAG} ${STABLE_TAG}"
+          sh "docker pull ${IMAGE_REPOSITORY}:${IMAGE_TAG}"
+          sh "docker tag ${IMAGE_REPOSITORY}:${IMAGE_TAG} ${STABLE_TAG}"
           sh "docker push ${STABLE_TAG}"
         }
       }
