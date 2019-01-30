@@ -37,7 +37,7 @@ pipeline {
         container('git') {
           script {
             ARTEFACT_ID = "${env.GITHUB_ORGANIZATION}/" + "${env.IMAGE}"
-            BASE_TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}"
+            BASE_TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}".toLowerCase()
             IMAGE_TAG = "${BASE_TAG}:${env.PULL_REQUEST}"
           }
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
@@ -72,7 +72,7 @@ pipeline {
         container('git') {
           script {
             ARTEFACT_ID = "${env.GITHUB_ORGANIZATION}/" + "${env.APP_NAME}"
-            BASE_TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}"
+            BASE_TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}".toLowerCase()
             IMAGE_TAG = "${BASE_TAG}:${env.PULL_REQUEST}"
           }
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
@@ -108,7 +108,7 @@ pipeline {
         container('git') {
           script {
             ARTEFACT_ID = "${env.GITHUB_ORGANIZATION}/" + "${env.APP_NAME}"
-            BASE_TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}"
+            BASE_TAG = "${env.DOCKER_REGISTRY_URL}:5000/library/${ARTEFACT_ID}".toLowerCase()
             IMAGE_TAG = "${BASE_TAG}:${env.PULL_REQUEST}"
           }
           withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
